@@ -5,12 +5,20 @@ import SwiftData
 final class Item {
     var title: String
     var done: Bool
-    var category: Category
+    var index: Int
+
+    var category: Category {
+        get { Category(rawValue: typeRaw) ?? .movies }
+        set { typeRaw = newValue.rawValue }
+    }
+
+    private(set) var typeRaw: Category.RawValue
 
     init(title: String, done: Bool, category: Category) {
         self.title = title
         self.done = done
-        self.category = category
+        self.typeRaw = category.rawValue
+        self.index = done ? 1 : 0
     }
 }
 

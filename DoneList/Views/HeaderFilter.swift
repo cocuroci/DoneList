@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct HeaderFilter: View {
-    @State private var selectedItem = 0
+    @Binding var selectedItem: Int
 
     var body: some View {
         Picker(selection: $selectedItem) {
@@ -12,12 +12,12 @@ struct HeaderFilter: View {
             Text("Não concluídos")
                 .tag(2)
         } label: {
-            Text("oie")
+            Text("Selecione um filtro")
         }
         .pickerStyle(.segmented)
     }
 }
 
 #Preview {
-    HeaderFilter()
+    HeaderFilter(selectedItem: .constant(1))
 }

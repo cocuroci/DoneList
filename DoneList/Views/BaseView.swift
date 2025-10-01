@@ -10,29 +10,19 @@ struct BaseView: View {
     }
 
     var body: some View {
-        NavigationStack {
-            TabView(selection: $selectedTab) {
-                ForEach(Category.allCases, id: \.self) { category in
-                    Tab(
-                        category.rawValue,
-                        systemImage: getTabImage(category: category),
-                        value: category
-                    ) {
-                        ListView()
-                    }
-                }
-            }
-            .navigationTitle("DoneList")
-            .toolbar {
-                ToolbarItem {
-                    Button {
-
-                    } label: {
-                        Label("Add Item", systemImage: "plus")
-                    }
+        TabView(selection: $selectedTab) {
+            ForEach(Category.allCases, id: \.self) { category in
+                Tab(
+                    category.rawValue,
+                    systemImage: getTabImage(category: category),
+                    value: category
+                ) {
+                    ListBaseView(category: category)
                 }
             }
         }
+        .animation(nil, value: selectedTab)
+        .id(UUID())
     }
 
     private func getTabImage(category: Category) -> String {
@@ -64,4 +54,5 @@ struct BaseView: View {
 
 #Preview {
     BaseView()
+        .modelContainer(SampleData.shared.modelContainer)
 }
