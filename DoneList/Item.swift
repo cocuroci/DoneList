@@ -14,12 +14,16 @@ final class Item {
     }
 }
 
-enum Category: String, CaseIterable, Identifiable {
+enum Category: String, CaseIterable, Codable {
     case movies
     case series
     case books
 
-    var id: String {
-        self.rawValue
+    var rawValue: String {
+        switch self {
+        case .movies: return "Filmes"
+        case .series: return "Séries"
+        case .books: return "Livros"
+        }
     }
 }

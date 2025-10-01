@@ -26,6 +26,7 @@ struct DoneListApp: App {
     var body: some Scene {
         WindowGroup {
             BaseView()
+                .tint(.red)
         }
         .modelContainer(sharedModelContainer)
     }
