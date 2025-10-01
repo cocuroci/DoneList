@@ -25,7 +25,7 @@ struct DoneListApp: App {
 
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            BaseView()
         }
         .modelContainer(sharedModelContainer)
     }
