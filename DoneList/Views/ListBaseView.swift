@@ -5,6 +5,7 @@ struct ListBaseView: View {
     private let categoty: Category
     @State private var filterSelected = 0
     @State var predicate: Predicate<Item>
+    @State private var showingAddItemView = false
 
     init(category: Category) {
         self.categoty = category
@@ -17,6 +18,11 @@ struct ListBaseView: View {
     var body: some View {
         NavigationStack {
             ListView(predicate: predicate, filterSelected: $filterSelected)
+                .sheet(isPresented: $showingAddItemView) {
+                    AddItemView(category: categoty)
+                        .presentationDetents([.medium])
+
+                }
                 .onChange(of: filterSelected) { oldValue, newValue in
                     switch newValue {
                     case 1:
@@ -37,7 +43,7 @@ struct ListBaseView: View {
                 .toolbar {
                     ToolbarItem {
                         Button {
-
+                            showingAddItemView.toggle()
                         } label: {
                             Label("Add Item", systemImage: "plus")
                         }
