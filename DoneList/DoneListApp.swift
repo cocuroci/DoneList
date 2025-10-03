@@ -15,7 +15,6 @@ struct DoneListApp: App {
             Item.self,
         ])
         let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
-
         do {
             return try ModelContainer(for: schema, configurations: [modelConfiguration])
         } catch {
@@ -27,6 +26,6 @@ struct DoneListApp: App {
         WindowGroup {
             BaseView()
         }
-        .modelContainer(SampleData.shared.modelContainer)
+        .modelContainer(sharedModelContainer)
     }
 }

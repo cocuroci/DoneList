@@ -53,9 +53,7 @@ struct AddItemView: View {
 
         let newItem = Item(title: title, category: category)
 
-        modelContext.insert(newItem)
-        try? modelContext.save()
-        
+        modelContext.insert(newItem)        
         dismiss()
     }
 }

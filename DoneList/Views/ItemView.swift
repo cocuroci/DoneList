@@ -2,30 +2,18 @@ import SwiftUI
 import SwiftData
 
 struct ItemView: View {
-    @Environment(\.modelContext) private var modelContext
-    @State private var isDone: Bool
-
-    private let item: Item
-
-    init(item: Item) {
-        self.item = item
-        _isDone = .init(initialValue: item.done)
-    }
+    @Bindable var item: Item
 
     var body: some View {
         HStack {
             Text(item.title)
             Spacer()
-            Toggle("Alterar", isOn: $isDone)
+            Toggle("Alterar", isOn: $item.done)
                 .labelsHidden()
-        }
-        .onChange(of: isDone) { oldValue, newValue in
-            item.done = newValue
-            try? modelContext.save()
         }
     }
 }
 
 #Preview {
-    ItemView(item: .init(title: "O Poderoso Chefão", done: true, category: .movies))
+    ItemView(item: .init(title: "Item de teste", category: .movies))        
 }
