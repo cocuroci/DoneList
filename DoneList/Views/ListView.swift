@@ -25,15 +25,20 @@ struct ListView: View {
                         ItemView(item: item)
                     }
                 }
-            } header: {
-                HeaderFilter(selectedItem: $filterSelected)
             }
         }
         .listStyle(.insetGrouped)
+        .toolbar {
+            ToolbarItem(placement: .principal) {
+                HeaderFilter(selectedItem: $filterSelected)
+            }
+        }
     }
 }
 
 #Preview {
-    ListView(predicate: .true, filterSelected: .constant(0))
-        .modelContainer(SampleData.shared.modelContainer)
+    NavigationStack {
+        ListView(predicate: .true, filterSelected: .constant(0))
+            .modelContainer(SampleData.shared.modelContainer)
+    }
 }
