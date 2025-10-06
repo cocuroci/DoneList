@@ -17,7 +17,7 @@ struct BaseView: View {
                     systemImage: getTabImage(category: category),
                     value: category
                 ) {
-                    ListBaseView(category: category)
+                    ListView(category: category)
                 }
             }
         }

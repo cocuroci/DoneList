@@ -18,6 +18,7 @@ final class SampleData {
             modelContainer = try ModelContainer(for: schema, configurations: [modelConfiguration])
 
             context.insert(Item(title: "O Poderoso Chefão", done: false, category: .movies))
+            context.insert(Item(title: "Superman", done: true, category: .movies))
             context.insert(Item(title: "Breaking Bad", done: true, category: .series))
             context.insert(Item(title: "1984", done: false, category: .books))
 
