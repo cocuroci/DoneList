@@ -22,8 +22,22 @@ final class Item {
     }
 }
 
-enum Category: String, CaseIterable, Codable {
+enum Category: String, CaseIterable, Codable, Equatable {
     case movies = "Filmes"
     case series = "Séries"
     case books = "Livros"
+    case games = "Games"
+
+    var icon: String {
+        switch self {
+        case .movies:
+            return "film"
+        case .series:
+            return "tv"
+        case .books:
+            return "book"
+        case .games:
+            return "gamecontroller"
+        }
+    }
 }
