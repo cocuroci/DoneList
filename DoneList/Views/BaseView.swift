@@ -14,23 +14,12 @@ struct BaseView: View {
             ForEach(Category.allCases, id: \.self) { category in
                 Tab(
                     category.rawValue,
-                    systemImage: getTabImage(category: category),
+                    systemImage: category.icon,
                     value: category
                 ) {
-                    ListBaseView(category: category)
+                    ListView(category: category)
                 }
             }
-        }
-    }
-
-    private func getTabImage(category: Category) -> String {
-        switch category {
-        case .movies:
-            return "film"
-        case .series: 
-            return "tv"
-        case .books: 
-            return "book"
         }
     }
 }
