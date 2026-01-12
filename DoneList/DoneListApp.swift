@@ -10,7 +10,7 @@ import SwiftData
 
 @main
 struct DoneListApp: App {
-    var sharedModelContainer: ModelContainer = {
+    private var sharedModelContainer: ModelContainer = {
         let schema = Schema([
             Item.self,
         ])
@@ -22,10 +22,17 @@ struct DoneListApp: App {
         }
     }()
 
+    @State private var viewModel: DoneListViewModel
+
+    init() {
+        _viewModel = .init(initialValue: DoneListViewModel(context: sharedModelContainer.mainContext))
+    }
+
     var body: some Scene {
         WindowGroup {
             BaseView()
         }
-        .modelContainer(sharedModelContainer)
+        .modelContext(sharedModelContainer.mainContext)
+        .environment(viewModel)
     }
 }

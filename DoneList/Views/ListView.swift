@@ -4,10 +4,9 @@ import SwiftData
 struct ListView: View {
     private let category: Category
 
-    @Query private var itemsNotDone: [Item]
-    @Query private var itemsDone: [Item]
     @State private var isExpanded = true
     @State private var showingAddItemView = false
+    @Environment(DoneListViewModel.self) var viewModel
 
     private var sort = [
         SortDescriptor<Item>(\.index, order: .forward),
@@ -16,39 +15,31 @@ struct ListView: View {
 
     init(category: Category) {
         self.category = category
-
-        _itemsNotDone = .init(filter: #Predicate { item in
-            !item.done && item.typeRaw == category.rawValue
-        }, sort: sort)
-
-        _itemsDone = .init(filter: #Predicate { item in
-            item.done && item.typeRaw == category.rawValue
-        }, sort: sort)
     }
 
     var body: some View {
         NavigationStack {
             List {
-                if itemsNotDone.isEmpty && itemsDone.isEmpty {
+                if viewModel.itemsNotDone.isEmpty && viewModel.itemsDone.isEmpty {
                     ContentUnavailableView("Sem resultados", systemImage: "tray")
                 }
 
-                if !itemsNotDone.isEmpty {
+                if !viewModel.itemsNotDone.isEmpty {
                     Section("Não concluídos") {
-                        ForEach(itemsNotDone) { item in
+                        ForEach(viewModel.itemsNotDone) { item in
                             ItemView(item: item)
                         }
                     }
                 }
 
-                if !itemsDone.isEmpty {
+                if !viewModel.itemsDone.isEmpty {
                     Section(isExpanded: $isExpanded) {
-                        ForEach(itemsDone) { item in
+                        ForEach(viewModel.itemsDone) { item in
                             ItemView(item: item)
                         }
                     } header: {
                         HStack {
-                            Text("Concluídos (\(itemsDone.count))")
+                            Text("Concluídos (\(viewModel.itemsDone.count))")
                             Spacer()
                             Button {
                                 withAnimation {
@@ -75,6 +66,9 @@ struct ListView: View {
             }
             .sheet(isPresented: $showingAddItemView) {
                 AddItemView(category: category)
+            }
+            .onAppear {
+                viewModel.fetchItems(category: category)
             }
         }
     }

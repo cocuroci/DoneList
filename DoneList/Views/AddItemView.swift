@@ -3,7 +3,7 @@ import SwiftUI
 
 struct AddItemView: View {
     @Environment(\.dismiss) private var dismiss
-    @Environment(\.modelContext) private var modelContext
+    @Environment(DoneListViewModel.self) var viewModel
 
     @State private var title: String = ""
     @State private var category: String = Category.movies.rawValue
@@ -48,12 +48,7 @@ struct AddItemView: View {
     }
 
     private func saveItem() {
-        guard !title.isEmpty, !category.isEmpty else { return }
-        guard let category = Category(rawValue: category) else { return }
-
-        let newItem = Item(title: title, category: category)
-
-        modelContext.insert(newItem)        
+        viewModel.addItem(title: title, category: category)
         dismiss()
     }
 }
