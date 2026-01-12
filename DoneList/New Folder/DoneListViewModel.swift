@@ -4,10 +4,7 @@ import SwiftData
 @Observable
 final class DoneListViewModel {
     private let context: ModelContext
-    private let sort = [
-        SortDescriptor<Item>(\.index, order: .forward),
-        SortDescriptor<Item>(\.title, order: .forward)
-    ]
+    private let sort: [SortDescriptor<Item>] = [.init(\.index, order: .forward), .init(\.title, order: .forward)]
 
     var itemsNotDone: [Item] = []
     var itemsDone: [Item] = []
@@ -39,5 +36,10 @@ final class DoneListViewModel {
 
         context.insert(Item(title: title, category: category))
         try? context.save()
+    }
+
+    func toogleDoneItem(_ item: Item, isDone: Bool) {
+        item.done = isDone
+        fetchItems(category: item.category)
     }
 }
