@@ -4,17 +4,20 @@ import SwiftData
 struct ListView: View {
     private let category: Category
 
-    @State private var isExpanded = true
     @State private var showingAddItemView = false
+    @State private var isExpandedSections = Set<Int>()
     @Environment(DoneListViewModel.self) var viewModel
-
-    private var sort = [
-        SortDescriptor<Item>(\.index, order: .forward),
-        SortDescriptor<Item>(\.title, order: .forward)
-    ]
 
     init(category: Category) {
         self.category = category
+    }
+
+    private func updatedExpandedSection(key: Int) {
+        if isExpandedSections.contains(key) {
+            isExpandedSections.remove(key)
+        } else {
+            isExpandedSections.insert(key)
+        }
     }
 
     var body: some View {
@@ -32,22 +35,28 @@ struct ListView: View {
                     }
                 }
 
-                if !viewModel.itemsDone.isEmpty {
-                    Section(isExpanded: $isExpanded) {
-                        ForEach(viewModel.itemsDone) { item in
-                            ItemView(item: item)
-                        }
-                    } header: {
-                        HStack {
-                            Text("Concluídos (\(viewModel.itemsDone.count))")
-                            Spacer()
-                            Button {
-                                withAnimation {
-                                    isExpanded.toggle()
+                if !viewModel.groupedDoneItems.isEmpty {
+                    ForEach(viewModel.groupedDoneItems, id: \.key) { group in
+                        Section(isExpanded: Binding(get: {
+                            isExpandedSections.contains(group.key)
+                        }, set: { value in
+                            updatedExpandedSection(key: group.key)
+                        })) {
+                            ForEach(group.value) { item in
+                                ItemView(item: item)
+                            }
+                        } header: {
+                            HStack {
+                                Text("Concluídos em \(group.key.description) (\(group.value.count))")
+                                Spacer()
+                                Button {
+                                    withAnimation {
+                                        updatedExpandedSection(key: group.key)
+                                    }
+                                } label: {
+                                    Image(systemName: "chevron.down")
+                                        .rotationEffect(Angle(degrees: isExpandedSections.contains(group.key) ? 0 : -180))
                                 }
-                            } label: {
-                                Image(systemName: "chevron.down")
-                                    .rotationEffect(Angle(degrees: isExpanded ? 0 : -180))
                             }
                         }
                     }

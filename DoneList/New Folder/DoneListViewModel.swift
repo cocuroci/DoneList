@@ -8,6 +8,7 @@ final class DoneListViewModel {
 
     var itemsNotDone: [Item] = []
     var itemsDone: [Item] = []
+    var groupedDoneItems: [(key: Int, value: [Item])] = []
 
     init(context: ModelContext) {
         self.context = context
@@ -25,6 +26,13 @@ final class DoneListViewModel {
         do {
             itemsNotDone = try context.fetch(itemsNotDoneFetchDescriptor)
             itemsDone = try context.fetch(itemsDoneFetchDescriptor)
+
+            groupedDoneItems = Dictionary(grouping: itemsDone) { item in
+                guard let completedDate = item.completedDate else { return 2025 }
+                return Calendar.current.component(.year, from: completedDate)
+            }.sorted { $0.key > $1.key }
+
+            debugPrint(groupedDoneItems)
         } catch {
             debugPrint(error)
         }
@@ -36,10 +44,14 @@ final class DoneListViewModel {
 
         context.insert(Item(title: title, category: category))
         try? context.save()
+
+        fetchItems(category: category)
     }
 
     func toogleDoneItem(_ item: Item, isDone: Bool) {
         item.done = isDone
+        item.completedDate = isDone ? Date() : nil
+
         fetchItems(category: item.category)
     }
 }
