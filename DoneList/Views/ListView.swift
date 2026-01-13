@@ -12,18 +12,18 @@ struct ListView: View {
         self.category = category
     }
 
-    private func updatedExpandedSection(key: Int) {
-        if isExpandedSections.contains(key) {
-            isExpandedSections.remove(key)
-        } else {
+    private func updatedExpandedSection(isExpanded: Bool, key: Int) {
+        if isExpanded {
             isExpandedSections.insert(key)
+        } else {
+            isExpandedSections.remove(key)
         }
     }
 
     var body: some View {
         NavigationStack {
             List {
-                if viewModel.itemsNotDone.isEmpty && viewModel.itemsDone.isEmpty {
+                if viewModel.itemsNotDone.isEmpty && viewModel.groupedDoneItems.isEmpty {
                     ContentUnavailableView("Sem resultados", systemImage: "tray")
                 }
 
@@ -39,31 +39,20 @@ struct ListView: View {
                     ForEach(viewModel.groupedDoneItems, id: \.key) { group in
                         Section(isExpanded: Binding(get: {
                             isExpandedSections.contains(group.key)
-                        }, set: { value in
-                            updatedExpandedSection(key: group.key)
+                        }, set: { isExpanded in
+                            updatedExpandedSection(isExpanded: isExpanded, key: group.key)
                         })) {
                             ForEach(group.value) { item in
                                 ItemView(item: item)
                             }
                         } header: {
-                            HStack {
-                                Text("Concluídos em \(group.key.description) (\(group.value.count))")
-                                Spacer()
-                                Button {
-                                    withAnimation {
-                                        updatedExpandedSection(key: group.key)
-                                    }
-                                } label: {
-                                    Image(systemName: "chevron.down")
-                                        .rotationEffect(Angle(degrees: isExpandedSections.contains(group.key) ? 0 : -180))
-                                }
-                            }
+                            Text("Concluídos em \(group.key.description) (\(group.value.count))")
                         }
                     }
                 }
             }
             .navigationTitle(category.rawValue)
-            .listStyle(.insetGrouped)
+            .listStyle(.sidebar)
             .toolbar {
                 ToolbarItem {
                     Button {
