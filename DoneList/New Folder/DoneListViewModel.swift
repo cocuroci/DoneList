@@ -5,9 +5,9 @@ import SwiftData
 final class DoneListViewModel {
     private let context: ModelContext
     private let sort: [SortDescriptor<Item>] = [.init(\.index, order: .forward), .init(\.title, order: .forward)]
+    private var itemsDone: [Item] = []
 
     var itemsNotDone: [Item] = []
-    var itemsDone: [Item] = []
     var groupedDoneItems: [(key: Int, value: [Item])] = []
 
     init(context: ModelContext) {
@@ -31,8 +31,6 @@ final class DoneListViewModel {
                 guard let completedDate = item.completedDate else { return 2025 }
                 return Calendar.current.component(.year, from: completedDate)
             }.sorted { $0.key > $1.key }
-
-            debugPrint(groupedDoneItems)
         } catch {
             debugPrint(error)
         }
