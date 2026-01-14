@@ -6,6 +6,7 @@ final class Item {
     var title: String
     var done: Bool
     var index: Int
+    var completedDate: Date?
 
     var category: Category {
         get { Category(rawValue: typeRaw) ?? .movies }
@@ -14,11 +15,12 @@ final class Item {
 
     private(set) var typeRaw: Category.RawValue
 
-    init(title: String, done: Bool = false, category: Category) {
+    init(title: String, done: Bool = false, category: Category, completedDate: Date? = nil) {
         self.title = title
         self.done = done
         self.typeRaw = category.rawValue
         self.index = done ? 1 : 0
+        self.completedDate = completedDate
     }
 }
 

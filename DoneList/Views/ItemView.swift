@@ -2,13 +2,22 @@ import SwiftUI
 import SwiftData
 
 struct ItemView: View {
-    @Bindable var item: Item
+    @Environment(DoneListViewModel.self) var viewModel
+    var item: Item
+
+    private var isDone: Binding<Bool> {
+        .init {
+            item.done
+        } set: { isDone in
+            viewModel.toogleDoneItem(item, isDone: isDone)
+        }
+    }
 
     var body: some View {
         HStack {
             Text(item.title)
             Spacer()
-            Toggle("Alterar", isOn: $item.done)
+            Toggle("Alterar", isOn: isDone)
                 .labelsHidden()
         }
     }

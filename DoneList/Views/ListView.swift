@@ -4,66 +4,55 @@ import SwiftData
 struct ListView: View {
     private let category: Category
 
-    @Query private var itemsNotDone: [Item]
-    @Query private var itemsDone: [Item]
-    @State private var isExpanded = true
     @State private var showingAddItemView = false
-
-    private var sort = [
-        SortDescriptor<Item>(\.index, order: .forward),
-        SortDescriptor<Item>(\.title, order: .forward)
-    ]
+    @State private var isExpandedSections = Set<Int>()
+    @Environment(DoneListViewModel.self) var viewModel
 
     init(category: Category) {
         self.category = category
+    }
 
-        _itemsNotDone = .init(filter: #Predicate { item in
-            !item.done && item.typeRaw == category.rawValue
-        }, sort: sort)
-
-        _itemsDone = .init(filter: #Predicate { item in
-            item.done && item.typeRaw == category.rawValue
-        }, sort: sort)
+    private func updatedExpandedSection(isExpanded: Bool, key: Int) {
+        if isExpanded {
+            isExpandedSections.insert(key)
+        } else {
+            isExpandedSections.remove(key)
+        }
     }
 
     var body: some View {
         NavigationStack {
             List {
-                if itemsNotDone.isEmpty && itemsDone.isEmpty {
+                if viewModel.itemsNotDone.isEmpty && viewModel.groupedDoneItems.isEmpty {
                     ContentUnavailableView("Sem resultados", systemImage: "tray")
                 }
 
-                if !itemsNotDone.isEmpty {
+                if !viewModel.itemsNotDone.isEmpty {
                     Section("Não concluídos") {
-                        ForEach(itemsNotDone) { item in
+                        ForEach(viewModel.itemsNotDone) { item in
                             ItemView(item: item)
                         }
                     }
                 }
 
-                if !itemsDone.isEmpty {
-                    Section(isExpanded: $isExpanded) {
-                        ForEach(itemsDone) { item in
-                            ItemView(item: item)
-                        }
-                    } header: {
-                        HStack {
-                            Text("Concluídos (\(itemsDone.count))")
-                            Spacer()
-                            Button {
-                                withAnimation {
-                                    isExpanded.toggle()
-                                }
-                            } label: {
-                                Image(systemName: "chevron.down")
-                                    .rotationEffect(Angle(degrees: isExpanded ? 0 : -180))
+                if !viewModel.groupedDoneItems.isEmpty {
+                    ForEach(viewModel.groupedDoneItems, id: \.key) { group in
+                        Section(isExpanded: Binding(get: {
+                            isExpandedSections.contains(group.key)
+                        }, set: { isExpanded in
+                            updatedExpandedSection(isExpanded: isExpanded, key: group.key)
+                        })) {
+                            ForEach(group.value) { item in
+                                ItemView(item: item)
                             }
+                        } header: {
+                            Text("Concluídos em \(group.key.description) (\(group.value.count))")
                         }
                     }
                 }
             }
             .navigationTitle(category.rawValue)
-            .listStyle(.insetGrouped)
+            .listStyle(.sidebar)
             .toolbar {
                 ToolbarItem {
                     Button {
@@ -75,6 +64,9 @@ struct ListView: View {
             }
             .sheet(isPresented: $showingAddItemView) {
                 AddItemView(category: category)
+            }
+            .onAppear {
+                viewModel.fetchItems(category: category)
             }
         }
     }
