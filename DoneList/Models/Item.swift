@@ -29,6 +29,7 @@ enum Category: String, CaseIterable, Codable, Equatable {
     case series = "Séries"
     case books = "Livros"
     case games = "Games"
+    case search = "Busca"
 
     var icon: String {
         switch self {
@@ -40,6 +41,8 @@ enum Category: String, CaseIterable, Codable, Equatable {
             return "book"
         case .games:
             return "gamecontroller"
+        case .search:
+            return "search"
         }
     }
 }
