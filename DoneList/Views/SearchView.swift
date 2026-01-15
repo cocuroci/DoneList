@@ -1,16 +1,25 @@
 import SwiftUI
 
 struct SearchView: View {
-    @State private var text: String = ""
+    @Environment(SearchViewModel.self) var viewModel
+    @State private var query = ""
     @FocusState private var isSearchFocused: Bool
 
     var body: some View {
         NavigationStack {
-            Text("SearchView")
+            List {
+                ForEach(viewModel.searchResults) { item in
+                    ItemView(item: item)
+                }
+            }
+            .navigationTitle("Resultado da busca")
         }
-        .navigationTitle("Busca")
-        .searchable(text: $text)
+        .searchable(text: $query)
         .searchFocused($isSearchFocused)
+        .textInputAutocapitalization(.never)
+        .onChange(of: query) { oldValue, newValue in
+            viewModel.executeSearch(text: newValue)
+        }
         .onAppear {
             DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(500)) {
                 self.isSearchFocused = true

@@ -25,9 +25,11 @@ struct DoneListApp: App {
     }()
 
     @State private var viewModel: DoneListViewModel
+    @State private var searchViewModel: SearchViewModel
 
     init() {
         _viewModel = .init(initialValue: DoneListViewModel(context: sharedModelContainer.mainContext))
+        _searchViewModel = .init(initialValue: SearchViewModel(context: sharedModelContainer.mainContext))
     }
 
     var body: some Scene {
@@ -35,5 +37,6 @@ struct DoneListApp: App {
             BaseView()
         }
         .environment(viewModel)
+        .environment(searchViewModel)
     }
 }

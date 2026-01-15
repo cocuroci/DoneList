@@ -1,5 +1,6 @@
 import Foundation
 import Combine
+import SwiftUI
 import SwiftData
 
 @Observable
@@ -7,22 +8,31 @@ final class SearchViewModel {
     private let sort: [SortDescriptor<Item>] = [.init(\.index, order: .forward), .init(\.title, order: .forward)]
     private let context: ModelContext
     private var cancellables: Set<AnyCancellable> = []
+    @ObservationIgnored @Published private var searchTerm = ""
 
-    @Published var searchText: String = ""
     var searchResults: [Item] = []
 
     init(context: ModelContext) {
         self.context = context
 
-        $searchText
+        $searchTerm
+            .removeDuplicates()
             .debounce(for: .milliseconds(500), scheduler: DispatchQueue.main)
-            .sink(receiveValue: executeSearch)
+            .sink(receiveValue: fetchSearchResults)
             .store(in: &cancellables)
     }
 
-    private func executeSearch(text: String) {
+    func executeSearch(text: String) {
+        searchTerm = text
+    }
+
+    private func fetchSearchResults(text: String) {
+        guard !text.isEmpty else {
+            return
+        }
+
         let query = FetchDescriptor<Item>(predicate: #Predicate { item in
-            item.title.localizedStandardContains(text)
+            item.title.contains(text)
         }, sortBy: sort)
 
         do {
