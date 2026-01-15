@@ -22,10 +22,7 @@ struct BaseView: View {
                     }
                 } else {
                     Tab(value: category, role: .search) {
-                        NavigationStack {
-
-                        }
-                        .searchable(text: .constant(""))
+                        SearchView()
                     }
                 }
             }
