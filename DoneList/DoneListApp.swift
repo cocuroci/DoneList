@@ -8,6 +8,8 @@
 import SwiftUI
 import SwiftData
 
+let sampleViewModel = DoneListViewModel(context: SampleData.shared.context)
+
 @main
 struct DoneListApp: App {
     private var sharedModelContainer: ModelContainer = {
@@ -32,7 +34,6 @@ struct DoneListApp: App {
         WindowGroup {
             BaseView()
         }
-        .modelContext(sharedModelContainer.mainContext)
         .environment(viewModel)
     }
 }

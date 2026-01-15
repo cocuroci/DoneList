@@ -26,5 +26,5 @@ struct BaseView: View {
 
 #Preview {
     BaseView()
-        .modelContainer(SampleData.shared.modelContainer)
+        .environment(sampleViewModel)
 }
