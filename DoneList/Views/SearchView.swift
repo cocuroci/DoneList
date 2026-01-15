@@ -18,7 +18,7 @@ struct SearchView: View {
         .searchFocused($isSearchFocused)
         .textInputAutocapitalization(.never)
         .onChange(of: query) { oldValue, newValue in
-            viewModel.executeSearch(text: newValue)
+            viewModel.executeSearch(query: newValue)
         }
         .onAppear {
             DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(500)) {

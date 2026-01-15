@@ -16,23 +16,23 @@ final class SearchViewModel {
         self.context = context
 
         $searchTerm
-            .removeDuplicates()
             .debounce(for: .milliseconds(500), scheduler: DispatchQueue.main)
             .sink(receiveValue: fetchSearchResults)
             .store(in: &cancellables)
     }
 
-    func executeSearch(text: String) {
-        searchTerm = text
-    }
-
-    private func fetchSearchResults(text: String) {
-        guard !text.isEmpty else {
+    func executeSearch(query: String) {
+        guard !query.isEmpty else {
+            searchResults = []
             return
         }
 
+        searchTerm = query
+    }
+
+    private func fetchSearchResults(text: String) {
         let query = FetchDescriptor<Item>(predicate: #Predicate { item in
-            item.title.contains(text)
+            item.title.localizedStandardContains(text)
         }, sortBy: sort)
 
         do {
