@@ -19,8 +19,10 @@ struct AddItemView: View {
                     TextField("Título", text: $title)
                     Picker("Categoria", selection: $category) {
                         ForEach(Category.allCases, id: \.self) { category in
-                            Text(category.rawValue)
-                                .tag(category.rawValue)
+                            if category != .search {
+                                Text(category.rawValue)
+                                    .tag(category.rawValue)
+                            }
                         }
                     }
                 }
