@@ -12,12 +12,18 @@ struct BaseView: View {
     var body: some View {
         TabView(selection: $selectedTab) {
             ForEach(Category.allCases, id: \.self) { category in
-                Tab(
-                    category.rawValue,
-                    systemImage: category.icon,
-                    value: category
-                ) {
-                    ListView(category: category)
+                if category != .search {
+                    Tab(
+                        category.rawValue,
+                        systemImage: category.icon,
+                        value: category
+                    ) {
+                        ListView(category: category)
+                    }
+                } else {
+                    Tab(value: category, role: .search) {
+                        SearchView()
+                    }
                 }
             }
         }
@@ -26,5 +32,6 @@ struct BaseView: View {
 
 #Preview {
     BaseView()
-        .modelContainer(SampleData.shared.modelContainer)
+        .environment(sampleViewModel)
+        .environment(sampleSearchViewModel)
 }

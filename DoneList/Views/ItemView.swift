@@ -24,5 +24,6 @@ struct ItemView: View {
 }
 
 #Preview {
-    ItemView(item: .init(title: "Item de teste", category: .movies))        
+    ItemView(item: .init(title: "Item de teste", category: .movies))
+        .environment(sampleViewModel)
 }
