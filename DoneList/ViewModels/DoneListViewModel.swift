@@ -1,5 +1,6 @@
 import Foundation
 import SwiftData
+import SwiftUI
 
 @Observable
 final class DoneListViewModel {
@@ -51,5 +52,15 @@ final class DoneListViewModel {
         item.completedDate = isDone ? Date() : nil
 
         fetchItems(category: item.category)
+    }
+
+    func removeItem(indexSet: IndexSet, with category: Category) {
+        for index in indexSet {
+            context.delete(itemsNotDone[index])
+        }
+
+        try? context.save()
+
+        fetchItems(category: category)
     }
 }

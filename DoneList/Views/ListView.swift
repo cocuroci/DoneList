@@ -31,6 +31,8 @@ struct ListView: View {
                     Section("Não concluídos") {
                         ForEach(viewModel.itemsNotDone) { item in
                             ItemView(item: item)
+                        }.onDelete { indexSet in
+                            viewModel.removeItem(indexSet: indexSet, with: category)
                         }
                     }
                 }
