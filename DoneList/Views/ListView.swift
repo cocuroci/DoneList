@@ -75,6 +75,6 @@ struct ListView: View {
 #Preview {
     NavigationStack {
         ListView(category: .movies)
-            .modelContainer(SampleData.shared.modelContainer)
+            .environment(sampleViewModel)
     }
 }

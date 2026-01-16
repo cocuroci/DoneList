@@ -9,6 +9,7 @@ import SwiftUI
 import SwiftData
 
 let sampleViewModel = DoneListViewModel(context: SampleData.shared.context)
+let sampleSearchViewModel = SearchViewModel(context: SampleData.shared.context)
 
 @main
 struct DoneListApp: App {

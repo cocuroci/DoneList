@@ -55,4 +55,5 @@ struct AddItemView: View {
 
 #Preview {
     AddItemView()
+        .environment(sampleViewModel)
 }

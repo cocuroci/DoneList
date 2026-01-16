@@ -17,26 +17,28 @@ final class SearchViewModel {
 
         $searchTerm
             .debounce(for: .milliseconds(500), scheduler: DispatchQueue.main)
-            .sink(receiveValue: fetchSearchResults)
+            .sink(receiveValue: { [weak self] value in
+                self?.fetchSearchResults(query: value)
+            })
             .store(in: &cancellables)
     }
 
     func executeSearch(query: String) {
+        searchTerm = query
+    }
+
+    private func fetchSearchResults(query: String) {
         guard !query.isEmpty else {
             searchResults = []
             return
         }
 
-        searchTerm = query
-    }
-
-    private func fetchSearchResults(text: String) {
-        let query = FetchDescriptor<Item>(predicate: #Predicate { item in
-            item.title.localizedStandardContains(text)
+        let queryFetchDescriptor = FetchDescriptor<Item>(predicate: #Predicate { item in
+            item.title.localizedStandardContains(query)
         }, sortBy: sort)
 
         do {
-            searchResults = try context.fetch(query)
+            searchResults = try context.fetch(queryFetchDescriptor)
         } catch {
             searchResults = []
         }

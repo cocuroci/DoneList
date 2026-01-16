@@ -33,4 +33,5 @@ struct BaseView: View {
 #Preview {
     BaseView()
         .environment(sampleViewModel)
+        .environment(sampleSearchViewModel)
 }
