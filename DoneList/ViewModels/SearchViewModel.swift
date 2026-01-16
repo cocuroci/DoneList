@@ -7,7 +7,7 @@ import SwiftData
 final class SearchViewModel {
     private let sort: [SortDescriptor<Item>] = [.init(\.index, order: .forward), .init(\.title, order: .forward)]
     private let context: ModelContext
-    private var cancellables: Set<AnyCancellable> = []
+    @ObservationIgnored private var cancellables: Set<AnyCancellable> = []
     @ObservationIgnored @Published private var searchTerm = ""
 
     var searchResults: [Item] = []
@@ -33,14 +33,16 @@ final class SearchViewModel {
             return
         }
 
-        let queryFetchDescriptor = FetchDescriptor<Item>(predicate: #Predicate { item in
-            item.title.localizedStandardContains(query)
-        }, sortBy: sort)
+        let queryFetchDescriptor = FetchDescriptor<Item>(predicate: filter(query: query), sortBy: sort)
 
         do {
             searchResults = try context.fetch(queryFetchDescriptor)
         } catch {
             searchResults = []
         }
+    }
+
+    private func filter(query: String) -> Predicate<Item> {
+        #Predicate { $0.title.localizedStandardContains(query) }
     }
 }
